@@ -1,0 +1,31 @@
+﻿.float-right {
+    float: right;
+}
+
+/* Adds a line through the text when Status = offline  */
+.offline {
+    padding-top: 1rem;
+    padding-left: 3rem;
+    background-color: rgba( 220, 53, 69, 0.1);
+/*    text-decoration-line: line-through;*/
+}
+
+/* Adds a checked mark when Status = online  */
+.online::before {
+    content: '';
+    position: absolute;
+    border-color: rgb(132, 245, 52);
+    border-style: solid;
+    border-width: 0 3px 4px 0;
+    top: .75rem;
+    left: 1.5rem;
+    transform: rotate(45deg);
+    height: 1.5rem;
+    width: 0.5rem;
+}
+
+.online {
+    padding-top: 1rem;
+    padding-left: 3rem;
+    background-color: rgba(25, 135, 84, 0.1);
+}

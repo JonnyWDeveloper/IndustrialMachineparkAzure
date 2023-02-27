@@ -1,0 +1,28 @@
+﻿@page "/Test"
+
+<ListItemCollection>
+    <ListItem Title="First ListItem">
+        <h4>Greetings from the first tab!</h4>
+
+        <label>
+            <input type="checkbox" @bind="showThirdListItem" />
+            Toggle third tab
+        </label>
+    </ListItem>
+
+    <ListItem Title="Second ListItem">
+        <h4>Hello from the second tab!</h4>
+    </ListItem>
+
+    @if (showThirdListItem)
+    {
+        <ListItem Title="Third ListItem">
+            <h4>Welcome to the disappearing third tab!</h4>
+            <p>Toggle this tab from the first tab.</p>
+        </ListItem>
+    }
+</ListItemCollection>
+
+@code {
+    private bool showThirdListItem;
+}

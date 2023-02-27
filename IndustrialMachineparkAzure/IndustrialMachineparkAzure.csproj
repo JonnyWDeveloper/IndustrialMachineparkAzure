@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Shared\IListItem.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\Counter.razor" />
+    <Content Remove="Pages\Test.razor" />
+    <Content Remove="Shared\ListItem.razor" />
+    <Content Remove="Shared\ListItemCollection.razor" />
+    <Content Remove="Shared\Machines.razor" />
+    <Content Remove="Shared\SeedMachines.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Shared\Machines.razor.css" />
+    <None Remove="Shared\z1gnawen.jk0~" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.3" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IndustrialMachineparkAzure.Shared\IndustrialMachineparkAzure.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Pages\Index.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
+</Project>

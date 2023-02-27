@@ -1,0 +1,42 @@
+﻿@*This component adds a Machine item
+*@
+
+<div class="border-bottom bg-white">
+    <EditForm EditContext="editContext" OnValidSubmit="OnAddItem" id="machineForm" class="py-4 container">
+        <div class="input-group input-group-lg form-check">
+            <input @bind-value="machine.Type" style="max-width: 60%; right: 1rem;" type="text" class="form-control" id="addMachineInput" placeholder="Add a machine type" autofocus>
+            <input class="form-check-input" @bind-value="machine.Status" id="statusCheck" type="checkbox">
+            <label class="form-check-label" style="padding-left: 1rem;" for="statusCheck">On / Off</label>
+            <div class="input-group-append input-group-lg">
+                <button id="addMachineBtn" class="btn btn-primary float-end" style="left: 3rem;">Add</button>
+            </div>
+        </div>
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <ValidationSummary></ValidationSummary>
+    </EditForm>
+</div>
+
+@code {
+
+    private EditContext editContext = default!;
+
+    private Machine machine = new Machine();
+
+    [Parameter]
+    public EventCallback<Machine> AddItem
+    {
+        get; set;
+    }
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(machine);
+    }
+
+    public async Task OnAddItem()
+    {
+        await AddItem.InvokeAsync(machine);
+        machine.Type = string.Empty;
+        machine.Status = false;
+        OnInitialized();
+    }
+}

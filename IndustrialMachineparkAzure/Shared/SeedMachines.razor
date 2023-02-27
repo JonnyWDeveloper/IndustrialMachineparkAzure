@@ -1,0 +1,40 @@
+﻿
+
+
+<div class="border-bottom bg-white py-3 container">
+    <div class="input-group input-group-lg">
+        <div class="input-group-append input-group-lg">
+            <button @onclick="SeedCSharp" @onclick:preventDefault="true" id="seedCSharpBtn" class="btn btn-primary" style="left: 1rem;  ">Seed C#</button>
+
+            <button @onclick="SeedJson" @onclick:preventDefault="true" id="seedJsonBtn" class="btn btn-primary" style="left: 2rem; ">Seed JSON</button>
+        </div>
+    </div>
+</div>
+
+<label style="padding-left: 1rem; padding-top: 2rem;">Seeded from C#:</label>
+<Machines ParkMachines="machinesSeededCSharp"></Machines>
+
+<label style="padding-left: 1rem; padding-top: 2rem;">Seeded from JSON file:</label>
+<Machines ParkMachines="jsonSeededMachines"></Machines>
+
+
+@code {
+    [Inject] //In order to get the Seed methods
+    private IMachineparkClient machineparkClient { get; set; } = default!;
+
+    private List<Machine>? machinesSeededCSharp;
+    private List<Machine>? jsonSeededMachines;
+
+    //From hardcoded machines in the HttpClient
+    private async Task SeedCSharp()
+    {
+        machinesSeededCSharp = (await machineparkClient.GetAsync()).ToList();
+    }
+
+    private async Task SeedJson()
+    {
+        jsonSeededMachines = (await machineparkClient.GetJsonAsync()).ToList();
+
+    }
+
+}

@@ -1,0 +1,135 @@
+﻿@typeparam TItem
+
+<div class="container">
+    <ul id="forecastsList" class="list-group align-self-sm-stretch mt-4">
+        @foreach (var item in Items)
+        {
+            var id = Guid.NewGuid();
+
+            <li id="@id" class="@SetCss(item) list-group-item">
+
+                @if (SelectedItems!.Contains(item))
+                {
+                    <input id="@id" type="checkbox" checked="checked" @onchange="_ => HandleChange(item)" />
+                }
+                else
+                {
+                    <input id="@id" type="checkbox" @onchange="_ => HandleChange(item)" />
+                }
+                @if (ItemTemplate is not null)
+                {
+                    @ItemTemplate(item)
+                }
+                <button class="btn btn-danger float-right" @onclick=" () => Delete(item)">
+                    x
+                </button>
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+
+    [Parameter]
+    public IEnumerable<TItem>? Items
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+
+    public RenderFragment<TItem>? ItemTemplate
+    {
+        get;
+        set;
+    }
+    [Parameter]                        //Blazor convention @bind-{PROPERTY} "Chained bind"
+    public List<TItem>? ListedItems //Has to have the same name minus Changed (event name)
+    {                                 //as the EventCallback property
+        get;
+        set;
+    }
+
+    [Parameter]                        //Must have the name ListedItems + (Change = event name)
+    public EventCallback<List<TItem>> ListedItemsChanged
+    {
+        get;
+        set;
+    }
+
+    [Parameter]                        //Blazor convention @bind-{PROPERTY} "Chained bind"
+    public List<TItem>? SelectedItems //Has to have the same name minus Changed (event name)
+    {                                 //as the EventCallback property
+        get;
+        set;
+    }
+
+    [Parameter]                        //Must have the name SelectedItems + (Change = event name)
+    public EventCallback<List<TItem>> SelectedItemsChanged
+    {
+        get;
+        set;
+    }
+
+    void HandleChange(TItem item)
+    {
+        if (item != null)
+        {
+            SetSelect(item);
+
+            SelectedItemsChanged.InvokeAsync(SelectedItems);
+
+            //StateHasChanged();
+        }
+    }
+
+    bool IsSelected(TItem item)
+    {
+        if (item != null)
+        {
+            if (SelectedItems!.Contains(item))
+            {
+
+                return true;
+            }
+            return false;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    string SetCss(TItem item)
+        => IsSelected(item) ? "online" : "offline";
+
+    void SetSelect(TItem item)
+    {
+        if (item != null)
+        {
+            if (IsSelected(item))
+                SelectedItems?.Remove(item);
+            else
+                SelectedItems?.Add(item);
+        }
+    }
+
+    void Delete(TItem item)
+    {
+        if (item != null)
+        {
+            if (IsSelected(item))
+            {
+                ListedItemsChanged.InvokeAsync(ListedItems);
+                ListedItems?.Remove(item);//Remove the li from ul
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
+                SelectedItems?.Remove(item);
+            }
+            else
+            {
+                ListedItems?.Remove(item);//Remove the li from ul
+            }
+        }
+    }
+}

@@ -1,0 +1,39 @@
+﻿
+
+<!-- Display the UL -->
+
+<CascadingValue Value="this">
+    <ul class="nav nav-tabs">
+        @ChildContent
+    </ul>
+</CascadingValue>
+
+<!-- Display body for only the active ListItem -->
+
+<div class="nav-tabs-body p-4">
+    @ActiveListItem?.ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    public IListItem? ActiveListItem { get; private set; }
+
+    public void AddListItem(IListItem listItem)
+    {
+        if (ActiveListItem is null)
+        {
+            SetActiveListItem(listItem);
+        }
+    }
+
+    public void SetActiveListItem(IListItem listItem)
+    {
+        if (ActiveListItem != listItem)
+        {
+            ActiveListItem = listItem;
+            StateHasChanged();
+        }
+    }
+}

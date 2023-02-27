@@ -1,0 +1,180 @@
+﻿@page "/"
+@inject HttpClient Http
+
+
+<PageTitle>Industrial Machinepark</PageTitle>
+
+<h1>Industrial Machinepark</h1>
+
+<p>This page lists the machines of the park and their status</p>
+<br />
+<h7><span class="info">Last updated: @DateTime.Now</span> <span class="online">Online: @OnlineMachines.Count</span>&nbsp;<span class="offline">Offline: @OfflineMachines.Count </span></h7>
+<br />
+@if (machines == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <br />
+    <AddMachine AddItem="AddMachine"></AddMachine>
+    <SelectMachines @bind-OfflineItems="OfflineMachines" 
+                Items="Machines" @bind-OnlineItems="OnlineMachines"
+                @bind-MachinesList="Machines"
+                Context="machine">
+        <ItemTemplate>
+            <span class="span-padding">@machine.Id </span>
+            <span class="span-padding">@machine.Type</span>
+            <span class="span-padding">@machine.Updated</span>
+            <span class="span-padding">@SetText(machine)</span>
+        </ItemTemplate>
+    </SelectMachines>
+
+    @*<SelectList   Items="Machines" @bind-SelectedItems="OnlineMachines"
+            Context="machine">
+        <ItemTemplate>
+            <span class="span-padding">@machine.Id </span>
+            <span class="span-padding">@machine.Type</span>
+            <span class="span-padding">@SetText(machine)</span>
+        </ItemTemplate>
+    </SelectList>*@
+
+}
+<hr />
+<div class="row">
+    <h7 class="online2">Machines Online: </h7>
+
+    <ol class="online3">
+        @foreach (var machine in OnlineMachines)
+        {
+            <li>@machine.Type: <span class="online2">@SetText(machine)</span> Last updated: <span class="online2">@machine.Updated</span></li>
+        }
+    </ol>
+    <h7 class="offline2">Machines Offline: </h7>
+
+    <ol class="offline3">
+        @foreach (var machine in OfflineMachines)
+        {
+            <li>@machine.Type: <span class="offline2">@SetText(machine)</span> Last updated: <span class="offline2">@machine.Updated</span></li>
+        }
+    </ol>
+</div>
+@code {
+
+
+    IMachineparkClient machineparkClient = new MachineparkClient(new HttpClient());
+
+    public Machine[]? machines;
+
+    public List<Machine>? Machines
+    {
+        get; set;
+    } = new();
+
+    List<Machine> OnlineMachines
+    {
+        get; set;
+    } = new();
+
+    List<Machine> OfflineMachines
+    {
+        get; set;
+    } = new();
+
+    public string Status
+    {
+        get; set;
+    } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        machines = await Http.GetFromJsonAsync<Machine[]>("sample-data/machines.json");
+        Machines = machines?.ToList();
+        Machines?.AddRange(machineparkClient.GetAsync().Result.ToList());
+        updateStatus();
+
+    }
+    protected void updateStatus()
+    {
+        if (Machines != null)
+        {
+            foreach (var item in Machines!)
+            {
+                if (item.Updated == null)
+                {
+                    item.Updated = DateTime.Now;
+                }
+
+                if (item.Status == true)
+                {
+                    if (!OnlineMachines.Contains(item))
+                    {
+                        OnlineMachines.Add(item);
+                    }
+                }
+
+                if (item.Status == false)
+                {
+                    if (!OfflineMachines.Contains(item))
+                    {
+                        OfflineMachines.Add(item);
+
+                    }
+                }
+            }
+        }
+    }
+
+    string SetText(Machine machine)
+    {
+        if (machine != null)
+        {
+            if (machine.Status == false)
+            {
+                Status = "Off";
+                return Status;
+            }
+            else
+            {
+                Status = "On";
+                return Status;
+            }
+        }
+        else
+        {
+            return "Unknown Status";
+        }
+
+    }
+
+    string SetCSS(Machine machine)
+    {
+        if (!machine.Status)
+        {
+            Status = "offline";
+            return Status;
+        }
+        else
+        {
+            Status = "online";
+            return Status;
+        }
+    }
+
+    //Added data
+    public async Task AddMachine(Machine newMachine)
+    {
+        if (newMachine != null)
+        {
+            var machine = new Machine
+                {
+                    Type = newMachine.Type,
+                    Status = newMachine.Status,
+                    Updated = DateTime.Now
+                };
+
+            Machines?.Add(machine);
+            updateStatus();
+        }
+    }
+}

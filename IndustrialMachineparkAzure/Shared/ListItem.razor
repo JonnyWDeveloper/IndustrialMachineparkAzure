@@ -1,0 +1,40 @@
+﻿@implements IListItem
+
+<li>
+    <a @onclick="ActivateListItem" class="nav-link @TitleCssClass" role="button">
+        @Title
+    </a>
+</li>
+
+@code {
+    [CascadingParameter]
+    public ListItemCollection? ContainerListItems
+    {
+        get; set;
+    }
+
+    [Parameter]
+    public string? Title
+    {
+        get; set;
+    }
+
+    [Parameter]
+    public RenderFragment? ChildContent
+    {
+        get; set;
+    }
+
+    private string? TitleCssClass =>
+        ContainerListItems?.ActiveListItem == this ? "active" : null;
+
+    protected override void OnInitialized()
+    {
+        ContainerListItems?.AddListItem(this);
+    }
+
+    private void ActivateListItem()
+    {
+        ContainerListItems?.SetActiveListItem(this);
+    }
+}

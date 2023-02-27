@@ -1,0 +1,58 @@
+﻿
+<div class="container">
+    <ul id="machinesList" class="list-group align-self-sm-stretch mt-4">
+        @foreach (var machine in ParkMachines)
+        {
+            <li @key="machine.Id" class="list-group-item @(machine.Status ? "online" : "offline")">
+
+                <input checked="@machine.Status" type="checkbox"
+                   @onchange="@(_ => HandleChanged(machine))" />
+                Time: @checkedMessage&nbsp;&nbsp;&nbsp;&nbsp;
+                Id: @machine.Id&nbsp;&nbsp;&nbsp;&nbsp;@machine.Type
+                <button  class="btn
+         btn-danger">
+                    x
+                </button>
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+
+    [Parameter]
+    public IEnumerable<Machine> ParkMachines { get; set; } = new List<Machine>();
+
+    private string checkedMessage = string.Empty;
+
+    private bool isChecked = true;
+
+    public Machine ActiveMachine
+    {
+        get; set;
+    }
+
+    private void HandleChanged(Machine machine)
+    {
+        if (ActiveMachine is null)
+        {
+            SetActiveListItem(machine);
+        }
+
+        checkedMessage = $"Updated: {DateTime.Now}";
+    }
+
+    public void SetActiveListItem(Machine machine)
+    {
+        if (ActiveMachine == machine)
+        {
+            ActiveMachine = machine;
+
+            ActiveMachine.Status = isChecked;
+
+            StateHasChanged();  //Rerenders the component.
+        }
+    }
+
+   
+}

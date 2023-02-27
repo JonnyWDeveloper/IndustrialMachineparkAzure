@@ -1,0 +1,121 @@
+﻿@if (Items != null)
+{
+    <div class="container">
+        <ul id="forecastsList" class="list-group align-self-sm-stretch mt-4">
+            @foreach (var item in Items!)
+            {
+                <li class="@(item.Status ? "online" : "offline") list-group-item">
+                    <input class="form-check-input" checked="@(item.Status ? true : false)" type="checkbox" @oninput=" () => HandleChange(item)" />
+                    @ItemTemplate(item)
+                    <button class="btn btn-danger float-right" @onclick=" () => Delete(item)">
+                        x
+                    </button>
+                </li>
+            }
+        </ul>
+    </div>
+}
+else
+{
+    <h3 class="offline">There are no machines to show.</h3>
+}
+@code {
+
+
+
+    [Parameter]
+    public IEnumerable<Machine>? Items
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+
+    public RenderFragment<Machine>? ItemTemplate
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public List<Machine>? OnlineItems
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public List<Machine>? OfflineItems
+    {
+        get;
+        set;
+    }
+
+    [Parameter]                        //Blazor convention @bind-{PROPERTY} "Chained bind"
+    public List<Machine>? MachinesList//Has to have the same name minus Changed (event name)
+    {                                 //as the EventCallback property
+        get;
+        set;
+    }
+
+    [Parameter]
+    public EventCallback<List<Machine>> OnlineItemsChanged
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public EventCallback<List<Machine>> OfflineItemsChanged
+    {
+        get;
+        set;
+    }
+
+    [Parameter]                        //Must have the name OnlineItems + (Change = event name)
+    public EventCallback<List<Machine>> MachinesListChanged
+    {
+        get;
+        set;
+    }
+
+    void HandleChange(Machine item)
+    {
+        item.Status = !item.Status;
+        item.Updated = DateTime.Now;
+        SetSelect(item);
+        OnlineItemsChanged.InvokeAsync(OnlineItems);
+        OfflineItemsChanged.InvokeAsync(OfflineItems);
+        StateHasChanged();
+    }
+
+    void SetSelect(Machine item)
+    {
+        if (item.Status == false)
+        {
+            OnlineItems?.Remove(item);
+            OfflineItems?.Add(item);
+        }
+        else
+        {
+            OfflineItems?.Remove(item);
+            OnlineItems?.Add(item);
+        }
+    }
+
+    void Delete(Machine item)
+    {
+        if (OnlineItems!.Contains(item))
+        {
+            OnlineItems?.Remove(item);
+        }
+        if (OfflineItems!.Contains(item))
+        {
+            OfflineItems?.Remove(item);
+        }
+        OnlineItemsChanged.InvokeAsync(OnlineItems);
+        OfflineItemsChanged.InvokeAsync(OfflineItems);
+        MachinesList?.Remove(item); //Remove the li from ul
+    }
+}
