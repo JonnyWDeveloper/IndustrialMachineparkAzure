@@ -34,7 +34,7 @@ namespace IndustrialMachineparkAzure.Services
                 new Machine()
                 {
                     Type = "Genio 15 Commercial Roaster",
-                    Status = true
+                    Status = false
                 },
                 new Machine()
                 {

@@ -2,7 +2,8 @@
   "dependencies": {
     "storage1": {
       "type": "storage",
-      "connectionId": "IndustrialMachinesConnection"
+      "connectionId": "IndustrialMachinesConnection",
+      "dynamicId": null
     }
   }
 }

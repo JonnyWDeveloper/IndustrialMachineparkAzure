@@ -1,19 +1,19 @@
 ﻿[
   {
     "type": "CoffeMachine",
-    "status": true
+    "status": false
   },
   {
     "type": "IceMachine",
-    "status": true
+    "status": false
   },
   {
     "type": "BakingMachine",
-    "status": true
+    "status": false
   },
   {
     "type": "IcecreamMachine",
-    "status": true
+    "status": false
   },
   {
     "type": "ButterMachine",
